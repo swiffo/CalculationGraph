@@ -97,7 +97,6 @@ class Graph:
         self.invalidate(node_name, *args)
         self._diddles[node_id] = value
 
-
     def invalidate(self, node_name, *args):
         """Invalidate the cached value of the node.
 
@@ -105,6 +104,8 @@ class Graph:
             node_name: Name of node.
             *args: Optional extra arguments for a dynamic node.
         """
+        # Note: If user diddles a node and calculates something based on it,
+        # then invalidates said no, we really shouldn't invalidate the calculations.
         node_id = self._node_id(node_name, *args)
         del self._node_values[node_id]
         to_invalidate = self._node_children[node_id]
@@ -116,7 +117,6 @@ class Graph:
 
             del self._node_children[node_id]
             del self._node_values[current_node_id]
-
 
     def remove_diddle(self, node_name, *args):
         pass
