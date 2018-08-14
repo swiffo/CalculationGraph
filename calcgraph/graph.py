@@ -26,7 +26,7 @@ class Graph:
         The argument, graph, is an instance of the present class.
 
         Args:
-            Node: Node object.
+            node: Node object.
 
         Raises:
             ValueError: A node by the same name has been previously registered.
