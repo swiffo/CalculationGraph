@@ -3,7 +3,6 @@ import unittest
 import graph as G
 import nodes
 
-
 class CustomNode:
     def __init__(self, name, value):
         self._name = name
