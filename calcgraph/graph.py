@@ -6,7 +6,8 @@ class Graph:
         self._node_dict = dict()  # node name to node object
         self._node_values = dict()  # node ID to value
         self._node_children = collections.defaultdict(list)  # node ID to list of 'child' node IDs of nodes calculated
-                                                             # using node ID value as input.
+                                                             # using node ID value as input. Basically, which nodes
+                                                             # should be notified of changes?
         self._diddles = dict()  # Node ID to value override
         self._call_stack = []  # Node ID call stack (populated and depopulated while evaluating nodes).
 
@@ -52,19 +53,28 @@ class Graph:
         if kargs:
             raise ValueError('Named parameters are not supported')
 
+        # When we evaluate a node, we register which nodes it depends on.from
+        # To be precise for each node it depends on, we register the node being
+        # evaluated as a child.
+
         node_id = self._node_id(node_name, *args)
+        # If the call stack is empty, it means the node is called directly by the user.
+        # Hence, there is no child to register.
         if self._call_stack:
             self._node_children[node_id].append(self._call_stack[-1])
 
-        self._call_stack.append(node_id)
-        if node_id not in self._node_values:
+        # Evaluate the node itself.
+        self._call_stack.append(node_id) # Add current node to call stack
+        if node_id in self._diddles:
+            return_val = self._diddles[node_id]
+        elif node_id in self._node_values:
+            return_val = self._node_values[node_id]
+        else:
             return_val = self._node_dict[node_name].calc(self, *args)
             self._node_values[node_id] = return_val
-        else:
-            return_val = self._node_values[node_id]
 
-        self._call_stack.pop()
-
+        self._call_stack.pop()  # Remove current node from call stack.
+                                # By induction, call stack is an invariant.
         return return_val
 
     def _node_id(self, node_name, *args):
@@ -91,7 +101,7 @@ class Graph:
             ValueError: The value was not specified or was set to None.
         """
         if value is None:
-            raise ValueError('value must be supplied')
+            raise ValueError('Value must be supplied. Cannot be None.')
 
         node_id = self._node_id(node_name, *args)
         self.invalidate(node_name, *args)
@@ -105,18 +115,35 @@ class Graph:
             *args: Optional extra arguments for a dynamic node.
         """
         # Note: If user diddles a node and calculates something based on it,
-        # then invalidates said no, we really shouldn't invalidate the calculations.
+        # then invalidates said node, we really shouldn't invalidate the calculations.
+
         node_id = self._node_id(node_name, *args)
-        del self._node_values[node_id]
+        self._node_values.pop(node_id, None)
         to_invalidate = self._node_children[node_id]
 
         while to_invalidate:
             current_node_id = to_invalidate.pop()
+
+            self._node_values.pop(current_node_id, None)
+
+            # If the node is diddled, its value will not change and so children do not
+            # need to be invalidated. Also, the node children remain the same (they still
+            # need to be invalidated when the diddle is removed or changed).
             if current_node_id not in self._diddles:
                 to_invalidate.extend(self._node_children[current_node_id])
-
-            del self._node_children[node_id]
-            del self._node_values[current_node_id]
+                self._node_children.pop(current_node_id, None)
 
     def remove_diddle(self, node_name, *args):
-        pass
+        """Remove any diddle from the node.
+
+        Args:
+            node_name: Name of the node.
+            *args: Optional. Any arguments to identify a dynamic node.
+        """
+        node_id = self._node_id(node_name, *args)
+        diddled_value = self._diddles.pop(node_id, None)
+
+        # Nodes should never have value None so we use this as a test of whether the node was diddled at all.
+        if diddled_value is not None:
+            self.invalidate(node_name, *args)
+
