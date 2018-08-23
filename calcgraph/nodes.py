@@ -23,6 +23,34 @@ class ConstantNode:
         """
         return self._value
 
+class VariableNode:
+    """A node with a user-changeable value."""
+
+    def __init__(self, node_name, value):
+        """Creates variable node.
+
+        Args:
+            node_name: Name of the node.
+            value: The initial value of the node. Can also be changed with set_value.
+        """
+        self._name = node_name
+        self._value = value
+
+    def name(self):
+        """Returns node name."""
+        return self._name
+
+    def calc(self, _graph):
+        """Returns value of the node."""
+        return self._value
+
+    def set_value(self, value):
+        """Sets the value of the node.
+
+        Args:
+            value: The new value of the node. Can be any type.
+        """
+        self._value = value
 
 class CalcNode:
     """A node whose value is calculated from those of other nodes."""

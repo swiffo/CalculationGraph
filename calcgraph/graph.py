@@ -1,4 +1,5 @@
 import collections
+import nodes
 
 class Graph:
     def __init__(self):
@@ -89,6 +90,17 @@ class Graph:
         """
         return hash((node_name, args))
 
+    def set_value(self, node_name, value):
+        """Sets the value of the specified node.
+
+        Args:
+            node_name: The name of a settable node on the graph.
+            value: The new value of the node.
+        """
+        self.invalidate(node_name)
+        self._node_dict[node_name].set_value(value)
+
+
     def diddle(self, node_name, *args, value=None):
         """Override value of specified node.
 
@@ -134,7 +146,7 @@ class Graph:
                 self._node_children.pop(current_node_id, None)
 
     def remove_diddle(self, node_name, *args):
-        """Remove any diddle from the node.
+        """Removes diddle from node.
 
         Args:
             node_name: Name of the node.
@@ -146,4 +158,3 @@ class Graph:
         # Nodes should never have value None so we use this as a test of whether the node was diddled at all.
         if diddled_value is not None:
             self.invalidate(node_name, *args)
-
