@@ -1,9 +1,15 @@
+import os
 import setuptools
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(os.path.join(this_directory, 'Readme.Md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setuptools.setup(
     name='calcgraph',
     version='0.1',
-    description='A calculation graph with caching and diddling.',
-    long_description='...',
+    description='A calculation graph with caching and overriding.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=['calcgraph'],
 )
