@@ -1,20 +1,19 @@
 import collections
-import nodes
 
 class Graph:
     def __init__(self):
-        """"Instantiate graph."""
+        """"Instantiates graph."""
         self._node_dict = dict()  # node name to node object
         self._node_values = dict()  # node ID to value
         self._node_children = collections.defaultdict(list)  # node ID to list of 'child' node IDs of nodes calculated
                                                              # using node ID value as input. Basically, which nodes
                                                              # should be notified of changes?
-        self._diddles = dict()  # Node ID to value override
+        self._overrides = dict()  # Node ID to value override
         self._call_stack = []  # Node ID call stack (populated and depopulated while evaluating nodes).
 
 
     def register(self, node):
-        """"Add node to graph.
+        """"Adds node to graph.
 
         A node is an object with the following signature:
 
@@ -39,7 +38,7 @@ class Graph:
         self._node_dict[node_name] = node
 
     def __call__(self, node_name, *args, **kargs):
-        """"Evaluate node value.
+        """"Evaluates node value.
 
         Args:
             node_name: String giving the name of the node to be evaluated.
@@ -66,8 +65,8 @@ class Graph:
 
         # Evaluate the node itself.
         self._call_stack.append(node_id) # Add current node to call stack
-        if node_id in self._diddles:
-            return_val = self._diddles[node_id]
+        if node_id in self._overrides:
+            return_val = self._overrides[node_id]
         elif node_id in self._node_values:
             return_val = self._node_values[node_id]
         else:
@@ -101,7 +100,7 @@ class Graph:
         self._node_dict[node_name].set_value(value)
 
 
-    def diddle(self, node_name, *args, value=None):
+    def override(self, node_name, *args, value=None):
         """Override value of specified node.
 
         Args:
@@ -117,7 +116,7 @@ class Graph:
 
         node_id = self._node_id(node_name, *args)
         self.invalidate(node_name, *args)
-        self._diddles[node_id] = value
+        self._overrides[node_id] = value
 
     def invalidate(self, node_name, *args):
         """Invalidate the cached value of the node.
@@ -141,11 +140,11 @@ class Graph:
             # If the node is diddled, its value will not change and so children do not
             # need to be invalidated. Also, the node children remain the same (they still
             # need to be invalidated when the diddle is removed or changed).
-            if current_node_id not in self._diddles:
+            if current_node_id not in self._overrides:
                 to_invalidate.extend(self._node_children[current_node_id])
                 self._node_children.pop(current_node_id, None)
 
-    def remove_diddle(self, node_name, *args):
+    def remove_override(self, node_name, *args):
         """Removes diddle from node.
 
         Args:
@@ -153,7 +152,7 @@ class Graph:
             *args: Optional. Any arguments to identify a dynamic node.
         """
         node_id = self._node_id(node_name, *args)
-        diddled_value = self._diddles.pop(node_id, None)
+        diddled_value = self._overrides.pop(node_id, None)
 
         # Nodes should never have value None so we use this as a test of whether the node was diddled at all.
         if diddled_value is not None:

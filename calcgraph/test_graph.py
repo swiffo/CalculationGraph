@@ -33,9 +33,9 @@ class DiddlingOneNode(unittest.TestCase):
         g = G.Graph()
         g.register(nodes.ConstantNode("const", 1))
 
-        g.diddle("const", value=2)
+        g.override("const", value=2)
         self.assertEqual(g("const"), 2)
-        g.remove_diddle("const")
+        g.remove_override("const")
         self.assertEqual(g("const"), 1)
 
     def test_eval_then_diddle(self):
@@ -43,9 +43,9 @@ class DiddlingOneNode(unittest.TestCase):
         g.register(nodes.ConstantNode("const", 1))
 
         self.assertEqual(g("const"), 1)
-        g.diddle("const", value=2)
+        g.override("const", value=2)
         self.assertEqual(g("const"), 2)
-        g.remove_diddle("const")
+        g.remove_override("const")
         self.assertEqual(g("const"), 1)
 
 
@@ -62,22 +62,22 @@ class DiddlingFixedNodes(unittest.TestCase):
 
     def test_diddling(self):
         self.assertEqual(self.g("add"), 5)
-        self.g.diddle("base1", value=20)
+        self.g.override("base1", value=20)
         self.assertEqual(self.g("base1"), 20)
         self.assertEqual(self.g("add"), 23)
         self.assertEqual(self.g("mul"), 60)
 
-        self.g.diddle("mul", value=11)
+        self.g.override("mul", value=11)
         self.assertEqual(self.g("final"), 23 - 11)
 
-        self.g.remove_diddle("base1")
+        self.g.remove_override("base1")
         self.assertEqual(self.g("final"), 5 - 11)
         self.assertEqual(self.g("add"), 5)
         self.assertEqual(self.g("mul"), 11)
 
-        self.g.diddle("base2", value=7)
+        self.g.override("base2", value=7)
         self.assertEqual(self.g("mul"), 11)
-        self.g.remove_diddle("mul")
+        self.g.remove_override("mul")
         self.assertEqual(self.g("final"), 9 - 14)
 
 
