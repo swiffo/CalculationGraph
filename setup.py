@@ -1,8 +1,8 @@
-import os
+from os import path
 import setuptools
 
 this_directory = path.abspath(path.dirname(__file__))
-with open(os.path.join(this_directory, 'Readme.Md'), encoding='utf-8') as f:
+with open(path.join(this_directory, 'Readme.Md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(
