@@ -65,6 +65,13 @@ node = ConstantNode('my_const', 27)
 graph.register(node)
 ```
 
+## Setting Values
+It is possible to set the values of the variable nodes. These nodes are meant to be used to house parameters for the calculations. 
+```
+graph.set_value('my_variable_node', value=88)
+```
+Currently variable nodes cannot be parameterized. That is, unlike calculated nodes it is not possible to access variable nodes with arguments. 
+
 ## Overriding
 Overriding provides the tool for what-if calculations. Setting an override means that the value of the node will be fixed with that override even if underlying data changes. Overrides can be set using the graph `override` method and removed using the graph `remove_override` method.
 ```
