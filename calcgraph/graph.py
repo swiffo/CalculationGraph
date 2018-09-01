@@ -53,7 +53,7 @@ class Graph:
         if kargs:
             raise ValueError('Named parameters are not supported')
 
-        # When we evaluate a node, we register which nodes it depends on.from
+        # When we evaluate a node, we register which nodes it depends on.
         # To be precise for each node it depends on, we register the node being
         # evaluated as a child.
 
