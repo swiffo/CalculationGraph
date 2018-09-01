@@ -3,12 +3,12 @@ import collections
 class Graph:
     def __init__(self):
         """"Instantiates graph."""
-        self._node_dict = dict()  # node name to node object
-        self._node_values = dict()  # node ID to value
+        self._node_dict = {}  # node name to node object
+        self._node_values = {}  # node ID to value
         self._node_children = collections.defaultdict(list)  # node ID to list of 'child' node IDs of nodes calculated
                                                              # using node ID value as input. Basically, which nodes
                                                              # should be notified of changes?
-        self._overrides = dict()  # Node ID to value override
+        self._overrides = {}  # Node ID to value override
         self._call_stack = []  # Node ID call stack (populated and depopulated while evaluating nodes).
 
 
