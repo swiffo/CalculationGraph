@@ -30,7 +30,7 @@ In practise it can be convenient to think of nodes as one of the 3 included type
 2. Variable nodes (`VariableNode()`) for which the value is set at initialization and can subsequently be changed by calling `set_value`.
 3. Calculated nodes (`CalculatedNode()`) for which a function is supplied that calculates the value of the node from other nodes.
 
-It is possible and practical to write a custom nodes class. Such a class must implement the following
+It is possible and often convenient to write a custom nodes classes. Such classes must implement the following
 
 ```
 def CustomNode:
