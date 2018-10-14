@@ -125,7 +125,7 @@ class Graph:
             node_name: Name of node.
             *args: Optional extra arguments for a dynamic node.
         """
-        # Note: If user diddles a node and calculates something based on it,
+        # Note: If user overrides a node and calculates something based on it,
         # then invalidates said node, we really shouldn't invalidate the calculations.
 
         node_id = self._node_id(node_name, *args)
@@ -152,8 +152,8 @@ class Graph:
             *args: Optional. Any arguments to identify a dynamic node.
         """
         node_id = self._node_id(node_name, *args)
-        diddled_value = self._overrides.pop(node_id, None)
+        override_value = self._overrides.pop(node_id, None)
 
         # Nodes should never have value None so we use this as a test of whether the node was overridden at all.
-        if diddled_value is not None:
+        if override_value is not None:
             self.invalidate(node_name, *args)
