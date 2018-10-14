@@ -137,15 +137,15 @@ class Graph:
 
             self._node_values.pop(current_node_id, None)
 
-            # If the node is diddled, its value will not change and so children do not
+            # If the node is overridden, its value will not change and so children do not
             # need to be invalidated. Also, the node children remain the same (they still
-            # need to be invalidated when the diddle is removed or changed).
+            # need to be invalidated when the override is removed or changed).
             if current_node_id not in self._overrides:
                 to_invalidate.extend(self._node_children[current_node_id])
                 self._node_children.pop(current_node_id, None)
 
     def remove_override(self, node_name, *args):
-        """Removes diddle from node.
+        """Removes override of node.
 
         Args:
             node_name: Name of the node.
@@ -154,6 +154,6 @@ class Graph:
         node_id = self._node_id(node_name, *args)
         diddled_value = self._overrides.pop(node_id, None)
 
-        # Nodes should never have value None so we use this as a test of whether the node was diddled at all.
+        # Nodes should never have value None so we use this as a test of whether the node was overridden at all.
         if diddled_value is not None:
             self.invalidate(node_name, *args)
